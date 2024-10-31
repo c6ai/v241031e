@@ -1,0 +1,33 @@
+import "hashes/mimcSponge/mimcSponge" as mimc
+
+const u32 LEVEL = 4
+const u32 SIZE = 1 << LEVEL
+const u32 QSIZE = SIZE + 1
+const u32 USIZE = SIZE * 4
+
+def enQueue<N>(field value, field[N]queue, u32 tail, u32 head) -> (field[N], u32, u32):
+    queue[tail] = value
+    tail = (tail + 1) % N
+    return queue, tail, head
+
+def deQueue<N>(field[N]queue, u32 tail, u32 head) -> (field, field[N], u32, u32):
+    field result = queue[head]
+    queue[head] = 0
+    head = (head + 1) % N
+    return result, queue, tail, head
+
+def main(field[SIZE] inputs) -> (field):
+    field[QSIZE] queue = [...inputs, 0]
+    u32 tail = SIZE
+    u32 head = 0
+    field root = 0
+    for u32 i in 0..SIZE - 1 do
+        //calc root
+        field left, queue, tail, head = deQueue(queue, tail, head)
+        field right, queue, tail, head = deQueue(queue, tail, head)
+        field[3] hashed = mimc([left,right],0)
+        root = hashed[0]
+        queue, tail, head = enQueue(root, queue, tail, head)
+    endfor
+
+    return root

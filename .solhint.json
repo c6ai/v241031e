@@ -1,0 +1,9 @@
+{
+  "extends": "solhint:recommended",
+  "rules": {
+    "compiler-version": [
+      "off",
+      "^0.5.8"
+    ]
+  }
+}
